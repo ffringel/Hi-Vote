@@ -68,5 +68,4 @@
         android:textColor="#AFDEFE"
         android:text="@string/intro" />
 
-
 </LinearLayout>
