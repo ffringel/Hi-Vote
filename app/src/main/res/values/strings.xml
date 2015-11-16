@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Hi-Vote</string>
     <string name="action_settings">Settings</string>
+
+    <string name="intro">Have fun voting and enjoy voting</string>
+
+    <string name="facebook_api_key">684249591711829</string>
+    <string name="google_client_id">3670127007-j6pn373f13f6u9v33t8i1rcf0dpt8ip9.apps.googleusercontent.com</string>
 </resources>
