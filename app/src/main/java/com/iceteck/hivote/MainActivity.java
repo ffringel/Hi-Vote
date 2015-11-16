@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
+                loginSuccess();
+                //TODO:
             }
 
             @Override
@@ -103,11 +104,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    private void loginSuccess() {
+        Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG)
+                .show();
+    }
+
     @Override
     public void onConnected(Bundle bundle) {
         mSignInClicked = false;
-        Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG)
-                .show();
+        loginSuccess();
         //TODO:
     }
 
