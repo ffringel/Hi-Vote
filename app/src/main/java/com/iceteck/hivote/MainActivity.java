@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = new Intent(this, CatergoriesActivity.class);
         //if user is already logged-in or has a valid session, just launch the categories Activity;
-        if(!AccessToken.getCurrentAccessToken().isExpired()){
+        if(AccessToken.getCurrentAccessToken() != null && !AccessToken.getCurrentAccessToken().isExpired()){
             Profile myProfile = Profile.getCurrentProfile();
             intent.putExtra("image", myProfile.getProfilePictureUri(150,150));
             intent.putExtra("cover", myProfile.getProfilePictureUri(150,150));
