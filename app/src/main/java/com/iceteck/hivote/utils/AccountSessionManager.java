@@ -80,6 +80,7 @@ public class AccountSessionManager {
                         + ", Image: " + personPhotoUrl);
                 username = personName;
                 userAuthToken = personId;
+                userEmail = email;
 // by default the profile url gives 50x50 px image only
 // we can replace the value with whatever dimension we want by
 // replacing sz=X
