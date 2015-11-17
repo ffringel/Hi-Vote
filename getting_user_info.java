@@ -63,3 +63,22 @@ private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
         bmImage.setImageBitmap(result);
     }
 }
+
+/**
+ * Revoking access from google
+ * */
+private void revokeGplusAccess() {
+    if (mGoogleApiClient.isConnected()) {
+        Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+        Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient)
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status arg0) {
+                        Log.e(TAG, "User access revoked!");
+                        mGoogleApiClient.connect();
+                        updateUI(false);
+                    }
+ 
+                });
+    }
+}
