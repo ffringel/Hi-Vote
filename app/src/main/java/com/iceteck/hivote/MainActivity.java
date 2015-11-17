@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private void loginSuccess() {
         Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG)
                 .show();
+
+        Intent intent = new Intent(this, CatergoriesActivity.class);
+        startActivity(intent);
     }
 
     @Override

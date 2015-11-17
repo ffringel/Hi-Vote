@@ -6,4 +6,8 @@
 
     <string name="facebook_api_key">684249591711829</string>
     <string name="google_client_id">3670127007-j6pn373f13f6u9v33t8i1rcf0dpt8ip9.apps.googleusercontent.com</string>
+    <string name="title_activity_catergories">Catergories</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
