@@ -9,9 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -78,6 +80,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
+        Intent intent = new Intent(this, CatergoriesActivity.class);
+        //if user is already logged-in or has a valid session, just launch the categories Activity;
+        if(!AccessToken.getCurrentAccessToken().isExpired()){
+            Profile myProfile = Profile.getCurrentProfile();
+            intent.putExtra("image", myProfile.getProfilePictureUri(150,150));
+            intent.putExtra("cover", myProfile.getProfilePictureUri(150,150));
+            startActivity(intent);
+        }
     }
 
     protected void onStart() {
@@ -117,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void loginSuccess() {
-        Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG)
+        Toast.makeText(this, getResources().getString(R.string.welcome), Toast.LENGTH_LONG)
                 .show();
 
         Intent intent = new Intent(this, CatergoriesActivity.class);
