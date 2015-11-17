@@ -2,7 +2,9 @@ package com.iceteck.hivote;
 
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -17,11 +19,13 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
+import com.iceteck.hivote.utils.AccountSessionManager;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 0;
+    private static final String TAG = MainActivity.class.getCanonicalName();
 
     private GoogleApiClient mGoogleApiClient;
     private CallbackManager mCallbackManager;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private boolean mSignInClicked;
     private ConnectionResult mConnectionResult;
     private SignInButton btnSignIn;
+    private SharedPreferences mSharedPreference; //hold user sensitive info and authentication tokens
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +45,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
+                loginSuccess();
+                //TODO:
             }
 
             @Override
@@ -71,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
+        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     protected void onStart() {
@@ -105,15 +112,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         else{
             Toast.makeText(this, getResources().getString(R.string.common_google_play_services_api_unavailable_text), Toast.LENGTH_LONG).show();
+            GooglePlayServicesUtil.getErrorDialog(mConnectionResult.getErrorCode(), this, 0 ).show();
+        }
+    }
+
+    private void loginSuccess() {
+        Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG)
+                .show();
+
+        Intent intent = new Intent(this, CatergoriesActivity.class);
+        AccountSessionManager lAccount = new AccountSessionManager(mSharedPreference, this, mGoogleApiClient);
+        if(lAccount.addAccount()) {
+            intent.putExtra("image", lAccount.getProfileImage());
+            intent.putExtra("cover", lAccount.getUserCoverPhoto());
+            startActivity(intent);
+        }else{
+            Toast.makeText(this, getResources().getString(R.string.unknownAuthError), Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         mSignInClicked = false;
-        Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG)
-                .show();
-        //TODO:
+        loginSuccess();
     }
 
     @Override
@@ -155,4 +176,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         }
     }
+
 }
