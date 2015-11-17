@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
     }
 
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void resolveSignInError() {
+        if(mConnectionResult != null)
         if (mConnectionResult.hasResolution()) {
             try {
                 mIntentInProgress = true;
@@ -100,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 mIntentInProgress = false;
                 mGoogleApiClient.connect();
             }
+        }
+        else{
+            Toast.makeText(this, getResources().getString(R.string.common_google_play_services_api_unavailable_text), Toast.LENGTH_LONG).show();
         }
     }
 
