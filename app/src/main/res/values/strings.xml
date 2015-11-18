@@ -16,7 +16,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="emptyprofileinfo">Person information is Empty</string>
-    <string name="unknownAuthError">Unkown Authentication error</string>
+    <string name="unknownAuthError">Unknown Authentication error</string>
     <string name="welcome">Welcome.</string>
 
 
