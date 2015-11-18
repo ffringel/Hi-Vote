@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnected(Bundle bundle) {
         mSignInClicked = false;
+        getGoogleProfileInfo();
     }
 
     @Override

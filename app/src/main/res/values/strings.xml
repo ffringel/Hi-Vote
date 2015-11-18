@@ -19,5 +19,8 @@
     <string name="unknownAuthError">Unknown Authentication error</string>
     <string name="welcome">Welcome.</string>
 
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

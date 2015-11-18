@@ -16,8 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.iceteck.hivote.utils.SessionManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CatergoriesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,29 +33,20 @@ public class CatergoriesActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catergories);
 
+        session = new SessionManager(getApplicationContext());
+
         initRecyclerView();
         initToolbar();
         initFab();
         setupDrawerLayout();
 
-        session = new SessionManager(getApplicationContext());
-        HashMap<String, String> user = session.getUserDetails();
-
-        String name = user.get(SessionManager.KEY_NAME);
-        String email = user.get(SessionManager.KEY_EMAIL);
-        String profilePicture = user.get(SessionManager.KEY_PICTURE);
-
-        TextView userName = (TextView) findViewById(R.id.nameTextView);
-        TextView userEmail = (TextView) findViewById(R.id.emailTextView);
-
-
-        Toast.makeText(getApplicationContext(), profilePicture, Toast.LENGTH_LONG).show();
-
-        //userName.setText(name);
-        //userEmail.setText(email);
-
         session.checkLogin();
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     private void initRecyclerView() {
@@ -84,6 +78,29 @@ public class CatergoriesActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_catergories);
+
+        //View header = navigationView.getHeaderView(0);
+        HashMap<String, String> user = session.getUserDetails();
+
+        String name = user.get(SessionManager.KEY_NAME);
+        String email = user.get(SessionManager.KEY_EMAIL);
+        String profilePicture = user.get(SessionManager.KEY_PICTURE);
+
+        TextView userName = (TextView) headerLayout.findViewById(R.id.nameTextView);
+        TextView userEmail = (TextView) headerLayout.findViewById(R.id.emailTextView);
+        CircleImageView imageView = (CircleImageView) headerLayout.findViewById(R.id.profileImageView);
+
+        Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show();
+        Picasso.with(this)
+                .load(profilePicture)
+                .resize(150, 150)
+                .into(imageView);
+
+        userName.setText(name);
+        userEmail.setText(email);
+
     }
 
     @Override
