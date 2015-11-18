@@ -1,8 +1,6 @@
 package com.iceteck.hivote;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -10,29 +8,57 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.iceteck.hivote.utils.AccountSessionManager;
+import com.iceteck.hivote.utils.SessionManager;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CatergoriesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private SharedPreferences sessionSp;
+    private Toolbar toolbar;
+    private SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catergories);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
+        session = new SessionManager(getApplicationContext());
+
+        initRecyclerView();
+        initToolbar();
+        initFab();
+        setupDrawerLayout();
+
+        session.checkLogin();
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    private void initRecyclerView() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void initFab() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,39 +67,40 @@ public class CatergoriesActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+    }
 
+    private void setupDrawerLayout() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        sessionSp = PreferenceManager.getDefaultSharedPreferences(this);
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //configure views for the navigation Drawer
-        TextView nameTextview = (TextView) findViewById(R.id.nameTextView);
-        TextView emailtextView = (TextView)findViewById(R.id.emailTextView);
-        nameTextview.setText(sessionSp.getString(AccountSessionManager.USERNAME,"google"));
-        emailtextView.setText(sessionSp.getString(AccountSessionManager.USEREMAIL, ""));
-        CircleImageView profileImage = (CircleImageView) findViewById(R.id.profileImageView);
-        LinearLayout drawerLinearLayout  = (LinearLayout) findViewById(R.id.linearLayout);
-        drawerLinearLayout.getBackground();
 
+        View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_catergories);
+
+        //View header = navigationView.getHeaderView(0);
+        HashMap<String, String> user = session.getUserDetails();
+
+        String name = user.get(SessionManager.KEY_NAME);
+        String email = user.get(SessionManager.KEY_EMAIL);
+        String profilePicture = user.get(SessionManager.KEY_PICTURE);
+
+        TextView userName = (TextView) headerLayout.findViewById(R.id.nameTextView);
+        TextView userEmail = (TextView) headerLayout.findViewById(R.id.emailTextView);
+        CircleImageView imageView = (CircleImageView) headerLayout.findViewById(R.id.profileImageView);
+
+        Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show();
         Picasso.with(this)
-                .load(getIntent().getStringExtra("image"))
+                .load(profilePicture)
                 .resize(150, 150)
-                .placeholder(R.drawable.ic_action_user)
-                .error(R.mipmap.ic_launcher)
-                .noFade()
-                .into(profileImage);
-        /*Picasso.with(this)
-                .load(getIntent().getStringExtra("cover"))
-                .resize(100, 100)
-                .placeholder(R.drawable.ic_action_user)
-                .error(R.mipmap.ic_launcher)
-                .into(profileImage);*/
+                .into(imageView);
+
+        userName.setText(name);
+        userEmail.setText(email);
+
     }
 
     @Override

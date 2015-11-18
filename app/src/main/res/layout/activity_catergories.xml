@@ -5,13 +5,8 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:fitsSystemWindows="true" tools:openDrawer="start">
 
-    <android.support.v7.widget.RecyclerView
+    <include layout="@layout/app_bar_catergories"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recyclerview"
-        />
-
-    <include layout="@layout/app_bar_catergories" android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <android.support.design.widget.NavigationView android:id="@+id/nav_view"
@@ -19,7 +14,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_catergories"
         app:menu="@menu/activity_catergories_drawer" />
 
 </android.support.v4.widget.DrawerLayout>
