@@ -2,10 +2,9 @@ package com.iceteck.hivote;
 
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -21,57 +20,50 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
-import com.iceteck.hivote.utils.AccountSessionManager;
+import com.google.android.gms.plus.model.people.Person;
+import com.iceteck.hivote.utils.SessionManager;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 0;
-    private static final String TAG = MainActivity.class.getCanonicalName();
-
+    private static final int PROFILE_PIC_SIZE = 100;
+    private String userName;
+    private String userEmail;
+    private String profilePicture;
+    private SessionManager session;
     private GoogleApiClient mGoogleApiClient;
     private CallbackManager mCallbackManager;
     private boolean mIntentInProgress;
     private boolean mSignInClicked;
     private ConnectionResult mConnectionResult;
-    private SignInButton btnSignIn;
-    private SharedPreferences mSharedPreference; //hold user sensitive info and authentication tokens
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCallbackManager = CallbackManager.Factory.create();
-
         setContentView(R.layout.activity_main);
-
+        session = new SessionManager(getApplicationContext());
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                loginSuccess();
-                //TODO:
+                getFacebookProfileInfo();
             }
-
             @Override
             public void onCancel() {
-
             }
-
             @Override
             public void onError(FacebookException error) {
-
             }
         });
-
-        //Button click listeners
-        btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
+//Button click listeners
+        SignInButton btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signInWithGplus();
             }
         });
-
-        //Initializing google plus api client
+//Initializing google plus api client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -79,9 +71,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
-        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = new Intent(this, CatergoriesActivity.class);
-        //if user is already logged-in or has a valid session, just launch the categories Activity;
+//if user is already logged-in or has a valid session, just launch the categories Activity;
         if(AccessToken.getCurrentAccessToken() != null && !AccessToken.getCurrentAccessToken().isExpired()){
             Profile myProfile = Profile.getCurrentProfile();
             intent.putExtra("image", myProfile.getProfilePictureUri(150,150));
@@ -89,69 +80,54 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             startActivity(intent);
         }
     }
-
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
     }
-
     protected void onStop() {
         super.onStop();
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
     }
-
     private void signInWithGplus() {
         if (!mGoogleApiClient.isConnecting()) {
             mSignInClicked = true;
+            getGoogleProfileInfo();
             resolveSignInError();
         }
     }
-
     private void resolveSignInError() {
         if(mConnectionResult != null)
-        if (mConnectionResult.hasResolution()) {
-            try {
-                mIntentInProgress = true;
-                mConnectionResult.startResolutionForResult(this, RC_SIGN_IN);
-            } catch (SendIntentException ex) {
-                mIntentInProgress = false;
-                mGoogleApiClient.connect();
+            if (mConnectionResult.hasResolution()) {
+                try {
+                    mIntentInProgress = true;
+                    mConnectionResult.startResolutionForResult(this, RC_SIGN_IN);
+                } catch (SendIntentException ex) {
+                    mIntentInProgress = false;
+                    mGoogleApiClient.connect();
+                }
             }
-        }
-        else{
-            Toast.makeText(this, getResources().getString(R.string.common_google_play_services_api_unavailable_text), Toast.LENGTH_LONG).show();
-            GooglePlayServicesUtil.getErrorDialog(mConnectionResult.getErrorCode(), this, 0 ).show();
-        }
+            else{
+                Toast.makeText(this, getResources().getString(R.string.common_google_play_services_api_unavailable_text), Toast.LENGTH_LONG).show();
+                GooglePlayServicesUtil.getErrorDialog(mConnectionResult.getErrorCode(), this, 0 ).show();
+            }
     }
-
     private void loginSuccess() {
         Toast.makeText(this, getResources().getString(R.string.welcome), Toast.LENGTH_LONG)
                 .show();
-
         Intent intent = new Intent(this, CatergoriesActivity.class);
-        AccountSessionManager lAccount = new AccountSessionManager(mSharedPreference, this, mGoogleApiClient);
-        if(lAccount.addAccount()) {
-            intent.putExtra("image", lAccount.getProfileImage());
-            intent.putExtra("cover", lAccount.getUserCoverPhoto());
-            startActivity(intent);
-        }else{
-            Toast.makeText(this, getResources().getString(R.string.unknownAuthError), Toast.LENGTH_LONG).show();
-        }
+        startActivity(intent);
     }
-
     @Override
     public void onConnected(Bundle bundle) {
         mSignInClicked = false;
-        loginSuccess();
+        getGoogleProfileInfo();
     }
-
     @Override
     public void onConnectionSuspended(int i) {
         mGoogleApiClient.connect();
     }
-
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         if (!result.hasResolution()) {
@@ -159,17 +135,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     .show();
             return;
         }
-
         if (!mIntentInProgress) {
-            //Store the connectionResult for later usage
+//Store the connectionResult for later usage
             mConnectionResult = result;
-
             if (mSignInClicked) {
                 resolveSignInError();
             }
         }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -178,13 +151,53 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (resultCode != RESULT_OK) {
                 mSignInClicked = false;
             }
-
             mIntentInProgress = false;
-
             if (!mGoogleApiClient.isConnecting()) {
                 mGoogleApiClient.connect();
             }
         }
     }
-
+    private void getGoogleProfileInfo() {
+        try {
+            if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+                String personName = currentPerson.getDisplayName();
+                String personPhotoUrl = currentPerson.getImage().getUrl();
+                String personGooglePlusProfile = currentPerson.getUrl();
+                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                personPhotoUrl = personPhotoUrl.substring(0,
+                        personPhotoUrl.length() - 2)
+                        + PROFILE_PIC_SIZE;
+                Log.e(LOG_TAG, "Name: " + personName + ", plusProfile: "
+                        + personGooglePlusProfile + ", email: " + email
+                        + ", Image: " + personPhotoUrl);
+                userName = personName;
+                userEmail = email;
+                profilePicture = personPhotoUrl;
+                session.createLoginSession(userName, userEmail, profilePicture);
+                loginSuccess();
+            } else {
+                Toast.makeText(getApplicationContext(), "Person info is null", Toast.LENGTH_LONG)
+                        .show();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    private void getFacebookProfileInfo() {
+        if (AccessToken.getCurrentAccessToken() != null) {
+            Profile profile = Profile.getCurrentProfile();
+            String personName = profile.getName();
+            String email = profile.getId();
+            String personPhotoUrl = String.valueOf(profile.getProfilePictureUri(PROFILE_PIC_SIZE,
+                    PROFILE_PIC_SIZE));
+            Log.e(LOG_TAG, "Name: " + personName + ", email: " + email
+                    + ", Image: " + personPhotoUrl);
+            userName = personName;
+            userEmail = email;
+            profilePicture = personPhotoUrl;
+            session.createLoginSession(userName, userEmail, profilePicture);
+            loginSuccess();
+        }
+    }
 }

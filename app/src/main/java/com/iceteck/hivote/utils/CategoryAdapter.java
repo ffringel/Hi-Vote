@@ -1,5 +1,7 @@
 package com.iceteck.hivote.utils;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,9 +10,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.iceteck.hivote.R;
+import com.iceteck.hivote.data.Category;
 
-public class CategoryAdapter extends RecyclerView.Adapter<RecyclerAdapter.CatViewHolder>{
+import java.util.List;
+
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CatViewHolder>{
+
+    private Context context;
+    private List<Category> cateogryList;
 
     public static class CatViewHolder extends RecyclerView.ViewHolder{
         CardView cardView;
@@ -29,7 +38,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerAdapter.CatVie
         }
     }
 
-    public RecyclerAdapter
+    public CategoryAdapter(Context ctx, List<Category> clist){
+        context = ctx;
+        cateogryList = clist;
+    }
     @Override
     public CatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_catergories, parent, false);
@@ -40,12 +52,20 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerAdapter.CatVie
 
     @Override
     public void onBindViewHolder(CatViewHolder holder, int position) {
-
+        //TODO
+        Category sCateory = cateogryList.get(position);
+        String title = sCateory.getTitle().substring(0,1);
+        holder.category.setText(sCateory.getTitle());
+        holder.description.setText(sCateory.getDescription());
+        holder.date.setText(sCateory.getDate());
+        TextDrawable drawable1 = TextDrawable.builder()
+                .buildRoundRect(title, Color.RED, 150); // radius in px
+        holder.categoryImage.setImageDrawable(drawable1);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return cateogryList.size();
     }
 
     @Override

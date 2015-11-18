@@ -15,10 +15,18 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.iceteck.hivote.data.Category;
+import com.iceteck.hivote.utils.CategoryAdapter;
 import com.iceteck.hivote.utils.SessionManager;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -27,6 +35,10 @@ public class CatergoriesActivity extends AppCompatActivity
 
     private Toolbar toolbar;
     private SessionManager session;
+    private CategoryAdapter mCategoryAdapter;
+    private List<Category> mCategoryList;
+    public static final String BASEURL = "http://hivote.iceteck.com/index.php/home/";
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +46,7 @@ public class CatergoriesActivity extends AppCompatActivity
         setContentView(R.layout.activity_catergories);
 
         session = new SessionManager(getApplicationContext());
-
+        mCategoryList = new ArrayList<Category>();
         initRecyclerView();
         initToolbar();
         initFab();
@@ -50,7 +62,7 @@ public class CatergoriesActivity extends AppCompatActivity
     }
 
     private void initRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
     }
 
     private void initToolbar() {
@@ -103,6 +115,30 @@ public class CatergoriesActivity extends AppCompatActivity
 
     }
 
+    private void setupAdapter(){
+        Ion.with(this)
+                .load(BASEURL+"fetchcategories")
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        // do stuff with the result or error
+                        JsonArray categories = result.getAsJsonArray();
+                        for(int i=0; i<categories.size(); i++){
+                            JsonObject cobject = (JsonObject) categories.get(i);
+                            mCategoryList.add(new Category(cobject.get("category_id").getAsString(),
+                                    cobject.get("category_title").getAsString(),
+                                    cobject.get("category_status").getAsString().equals("1")?true:false,
+                                    cobject.get("category_url").getAsString(),
+                                    cobject.get("category_description").getAsString(),
+                                    cobject.get("category_date").getAsString()));
+                        }
+                        mCategoryAdapter = new CategoryAdapter(CatergoriesActivity.this, mCategoryList);
+                        mRecyclerView.setAdapter(mCategoryAdapter);
+                    }
+                });
+
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

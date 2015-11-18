@@ -1,10 +1,5 @@
 package com.iceteck.hivote.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
@@ -13,43 +8,68 @@ import java.util.Map;
  */
 public class Category {
 
-    /**
-     * An array of sample (dummy) items.
-     */
-    public static List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+    private String id;
+    private String title;
+    private boolean status;
+    private String url;
+    private String description;
+    private String date;
 
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+   public Category(String cid, String title,  boolean status, String url, String desc, String date){
+       this.id = cid;
+       this.title = title;
+       this.status = status;
+       this.url = url;
+       this.description =desc;
+       this.date = date;
 
-    static {
-        // Add 3 sample items.
-        addItem(new DummyItem("1", "Item 1"));
-        addItem(new DummyItem("2", "Item 2"));
-        addItem(new DummyItem("3", "Item 3"));
+   }
+
+    public String getId() {
+        return this.id;
     }
 
-    private static void addItem(DummyItem item) {
-        ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
+    public void setId(String id) {
+        this.id = id;
     }
 
-    /**
-     * A dummy item representing a piece of content.
-     */
-    public static class DummyItem {
-        public String id;
-        public String content;
+    public boolean isStatus() {
+        return this.status;
+    }
 
-        public DummyItem(String id, String content) {
-            this.id = id;
-            this.content = content;
-        }
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
-        @Override
-        public String toString() {
-            return content;
-        }
+    public String getDate() {
+        return this.date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
