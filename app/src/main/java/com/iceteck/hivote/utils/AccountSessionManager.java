@@ -5,11 +5,14 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.iceteck.hivote.MainActivity;
 import com.iceteck.hivote.R;
 
 /**
@@ -58,60 +61,90 @@ public class AccountSessionManager {
     }
 
     //save user session
-    public boolean addAccount() {
-        try {
-            if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
-                Person currentPerson = Plus.PeopleApi
-                        .getCurrentPerson(mGoogleApiClient);
-                String personId = currentPerson.getId();
-                ///String personIdToken = currentPerson.
+    public boolean addAccount(MainActivity.LOGIN_TYPE t) {
+        switch (t) {
+            case GOOGLE:
+            try {
+                if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+                    Person currentPerson = Plus.PeopleApi
+                            .getCurrentPerson(mGoogleApiClient);
+                    String personId = currentPerson.getId();
+                    ///String personIdToken = currentPerson.
 
-                String personName = currentPerson.getDisplayName();
-                String personPhotoUrl = currentPerson.getImage().getUrl();
-                String personGooglePlusProfile = currentPerson.getUrl();
-                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                String coverPhoto = currentPerson.getCover().hasCoverPhoto()? currentPerson.getCover().getCoverPhoto().getUrl():"";
-                userCoverPhoto = coverPhoto;
-                personPhotoUrl = personPhotoUrl.substring(0,
-                        personPhotoUrl.length() - 2)
-                        + PROFILE_PIC_SIZE;
-                Log.e(TAG, "Name: " + personName + ", plusProfile: "
-                        + personGooglePlusProfile + ", email: " + email
-                        + ", Image: " + personPhotoUrl);
-                username = personName;
-                userAuthToken = personId;
-                userEmail = email;
+                    String personName = currentPerson.getDisplayName();
+                    String personPhotoUrl = currentPerson.getImage().getUrl();
+                    String personGooglePlusProfile = currentPerson.getUrl();
+                    String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                    String coverPhoto = currentPerson.getCover().hasCoverPhoto() ? currentPerson.getCover().getCoverPhoto().getUrl() : "";
+                    userCoverPhoto = coverPhoto;
+                    personPhotoUrl = personPhotoUrl.substring(0,
+                            personPhotoUrl.length() - 2)
+                            + PROFILE_PIC_SIZE;
+                    Log.e(TAG, "Name: " + personName + ", plusProfile: "
+                            + personGooglePlusProfile + ", email: " + email
+                            + ", Image: " + personPhotoUrl);
+                    username = personName;
+                    userAuthToken = personId;
+                    userEmail = email;
 // by default the profile url gives 50x50 px image only
 // we can replace the value with whatever dimension we want by
 // replacing sz=X
 
-                profileImage = personPhotoUrl;
+                    profileImage = personPhotoUrl;
 //                new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
-                return mSharedPreferences.edit().putString(AccountSessionManager.USERID, personId)
-                        .putString(AccountSessionManager.USERAUTHTOKEN, "")
-                        .putString(AccountSessionManager.USERNAME, personName)
-                        .putString(AccountSessionManager.USEREMAIL, email)
-                        .putString(AccountSessionManager.USERPROFILEPHOTO, personPhotoUrl)
-                        .putString(AccountSessionManager.USERCOVERPHOTO, coverPhoto)
-                        .commit();
+                    return mSharedPreferences.edit().putString(AccountSessionManager.USERID, personId)
+                            .putString(AccountSessionManager.USERAUTHTOKEN, "")
+                            .putString(AccountSessionManager.USERNAME, personName)
+                            .putString(AccountSessionManager.USEREMAIL, email)
+                            .putString(AccountSessionManager.USERPROFILEPHOTO, personPhotoUrl)
+                            .putString(AccountSessionManager.USERCOVERPHOTO, coverPhoto)
+                            .commit();
 
-            } else {
+                } else {
+                    Toast.makeText(mcontext,
+                            mcontext.getResources().getString(R.string.emptyprofileinfo)
+                            , Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
                 Toast.makeText(mcontext,
-                        mcontext.getResources().getString(R.string.emptyprofileinfo)
+                        mcontext.getResources().getString(R.string.unknownAuthError)
                         , Toast.LENGTH_LONG).show();
                 return false;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(mcontext,
-                    mcontext.getResources().getString(R.string.unknownAuthError)
-                    , Toast.LENGTH_LONG).show();
-            return false;
+            case FACEBOOK:
+                if(AccessToken.getCurrentAccessToken() != null && !AccessToken.getCurrentAccessToken().isExpired()){
+                    Profile myProfile = Profile.getCurrentProfile();
+                    String personName = myProfile.getName();
+                    String personPhotoUrl = myProfile.getProfilePictureUri(150, 150).toString();
+                    String personGooglePlusProfile = myProfile.getLinkUri().toString();
+                    String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                    userCoverPhoto = myProfile.getProfilePictureUri(200,200).toString();
+
+                    Log.e(TAG, "Name: " + personName + ", plusProfile: "
+                            + personGooglePlusProfile + ", email: " + email
+                            + ", Image: " + personPhotoUrl);
+                    username = personName;
+                    userAuthToken = userID = myProfile.getId();
+                    userEmail = myProfile.getLinkUri().toString();
+                    return mSharedPreferences.edit().putString(AccountSessionManager.USERID, userID)
+                            .putString(AccountSessionManager.USERAUTHTOKEN, "")
+                            .putString(AccountSessionManager.USERNAME, personName)
+                            .putString(AccountSessionManager.USEREMAIL, email)
+                            .putString(AccountSessionManager.USERPROFILEPHOTO, personPhotoUrl)
+                            .putString(AccountSessionManager.USERCOVERPHOTO, userCoverPhoto)
+                            .commit();
+                }
+                return false;
+
         }
+        return false;
     }
 
     //remove account from SharedPreference or logout
     public void removeAccount() {
+        if(mGoogleApiClient != null )
         if (mGoogleApiClient.isConnected()) {
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
             Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient)
@@ -122,8 +155,8 @@ public class AccountSessionManager {
                             mGoogleApiClient.connect();
                         }
                     });
-            mSharedPreferences.edit().clear().commit();
         }
+        mSharedPreferences.edit().clear().commit();
     }
 
     public String getUsername() {

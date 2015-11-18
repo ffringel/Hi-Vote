@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private SignInButton btnSignIn;
     private SharedPreferences mSharedPreference; //hold user sensitive info and authentication tokens
 
+    public static enum LOGIN_TYPE {FACEBOOK, GOOGLE};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                loginSuccess();
+                loginSuccess(LOGIN_TYPE.FACEBOOK);
                 //TODO:
             }
 
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             @Override
             public void onError(FacebookException error) {
-
+                Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -126,13 +128,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    private void loginSuccess() {
+    private void loginSuccess(LOGIN_TYPE l) {
         Toast.makeText(this, getResources().getString(R.string.welcome), Toast.LENGTH_LONG)
                 .show();
 
         Intent intent = new Intent(this, CatergoriesActivity.class);
         AccountSessionManager lAccount = new AccountSessionManager(mSharedPreference, this, mGoogleApiClient);
-        if(lAccount.addAccount()) {
+        if(lAccount.addAccount(l)) {
             intent.putExtra("image", lAccount.getProfileImage());
             intent.putExtra("cover", lAccount.getUserCoverPhoto());
             startActivity(intent);
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnected(Bundle bundle) {
         mSignInClicked = false;
-        loginSuccess();
+        loginSuccess(LOGIN_TYPE.GOOGLE);
     }
 
     @Override
