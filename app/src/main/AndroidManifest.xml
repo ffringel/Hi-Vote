@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
     <!-- android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" -->
     <application
         android:name=".HiVoteApplication"
@@ -41,6 +42,15 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name=".NomineeActivity"
+            android:label="@string/title_activity_nominee"
+            android:parentActivityName=".CatergoriesActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.iceteck.hivote.CatergoriesActivity" />
+        </activity>
     </application>
 
 </manifest>

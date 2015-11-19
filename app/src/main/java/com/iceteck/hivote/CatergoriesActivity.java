@@ -72,7 +72,6 @@ public class CatergoriesActivity extends AppCompatActivity
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //mRecyclerView.setAdapter(null);
                 setupAdapter();
             }
         });
