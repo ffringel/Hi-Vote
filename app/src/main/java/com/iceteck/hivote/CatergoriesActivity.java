@@ -51,9 +51,8 @@ public class CatergoriesActivity extends AppCompatActivity
         initToolbar();
         initFab();
         setupDrawerLayout();
-
         session.checkLogin();
-
+        setupAdapter();
     }
 
     @Override
