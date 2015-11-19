@@ -8,7 +8,11 @@
     <string name="google_client_id">3670127007-j6pn373f13f6u9v33t8i1rcf0dpt8ip9.apps.googleusercontent.com</string>
 
     <string name="title_activity_category">Category</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_new">Add New Category</string>
+    <string name="name">Category Name</string>
+    <string name="desc">Description</string>
 
     <string name="title_activity_catergories">Catergories</string>
 
@@ -18,6 +22,8 @@
     <string name="emptyprofileinfo">Person information is Empty</string>
     <string name="unknownAuthError">Unknown Authentication error</string>
     <string name="welcome">Welcome.</string>
+    <string name="title_activity_add_category">AddCategory</string>
+    <string name="title_activity_nominee">NomineeActivity</string>
 
 
 </resources>

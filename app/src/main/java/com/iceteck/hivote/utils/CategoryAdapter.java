@@ -1,7 +1,6 @@
 package com.iceteck.hivote.utils;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +21,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CatVie
     private Context context;
     private List<Category> cateogryList;
 
-    public static class CatViewHolder extends RecyclerView.ViewHolder{
+    public static class CatViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         TextView category;
         TextView description;
@@ -46,9 +45,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CatVie
     @Override
     public CatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_recycler, parent, false);
-        CatViewHolder viewHolder = new CatViewHolder(view);
 
-        return viewHolder;
+        return new CatViewHolder(view);
     }
 
     @Override
