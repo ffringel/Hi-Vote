@@ -10,9 +10,12 @@
     <string name="title_activity_category">Category</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
-    <string name="add_new">Add New Category</string>
-    <string name="name">Category Name</string>
-    <string name="desc">Description</string>
+    <string name="new_category">Add New Category</string>
+    <string name="cat_name">Category Name</string>
+    <string name="cat_desc">Description</string>
+    <string name="new_nominee">Add New Nominee</string>
+    <string name="nom_name">Nominee Name</string>
+    <string name="nom_desc">Description</string>
 
     <string name="title_activity_catergories">Catergories</string>
 
