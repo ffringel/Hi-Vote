@@ -150,17 +150,13 @@ public class CatergoriesActivity extends AppCompatActivity
                         }
 
                         mCategoryAdapter = new CategoryAdapter(CatergoriesActivity.this, mCategoryList);
-<<<<<<< HEAD
                         mRecyclerView.setAdapter(mCategoryAdapter);
 
-=======
                         mRecyclerView.swapAdapter(mCategoryAdapter, true);
                         mRefreshLayout.setRefreshing(false);
->>>>>>> 448d0bcdd9e72f68c3cac4cff515ed567437dee5
                     }
                 });
     }
-
 
     @Override
     public void onBackPressed() {
@@ -202,7 +198,25 @@ public class CatergoriesActivity extends AppCompatActivity
                     .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-
+                            Ion.with(CatergoriesActivity.this)
+                                    .load(BASEURL + "addcategory")
+                                    .setBodyParameter("title", "noop")
+                                    .setBodyParameter("description", "bar")
+                                    .asJsonObject()
+                                    .setCallback(new FutureCallback<JsonObject>() {
+                                        @Override
+                                        public void onCompleted(Exception e, JsonObject response) {
+                                            if(e != null){
+                                                if(response.getAsString("status").equals("200")){
+                                                    //success
+                                                }else{
+                                                    //failed to create category
+                                                }
+                                            }else{
+                                                Toast.makeText(CatergoriesActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
                         }
                     })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
