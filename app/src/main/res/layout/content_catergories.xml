@@ -9,56 +9,8 @@
     tools:showIn="@layout/app_bar_catergories"
     tools:context="com.iceteck.hivote.CatergoriesActivity">
 
-    <android.support.v7.widget.CardView
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        android:id="@+id/categoryview">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp"
-            android:weightSum="1">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="0">
-
-                <TextView android:id="@+id/category_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:textSize="26sp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Best Hip-Hop Act"/>
-
-                <TextView android:id="@+id/description"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="hotest jam in the streets. Vote blah blah blah blah"
-                    android:paddingBottom="10dp"/>
-
-                <TextView android:id="@+id/date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:text="17-11-2015"/>
-            </LinearLayout>
-
-            <ImageView android:id="@+id/category_image"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:src="@drawable/acca" />
-
-
-
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerview" />
 </LinearLayout>

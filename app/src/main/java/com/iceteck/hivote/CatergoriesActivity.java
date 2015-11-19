@@ -8,12 +8,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -46,13 +48,14 @@ public class CatergoriesActivity extends AppCompatActivity
         setContentView(R.layout.activity_catergories);
 
         session = new SessionManager(getApplicationContext());
-        mCategoryList = new ArrayList<Category>();
-        initRecyclerView();
+        mCategoryList = new ArrayList<>();
         initToolbar();
         initFab();
         setupDrawerLayout();
         session.checkLogin();
         setupAdapter();
+        initRecyclerView();
+        session.checkLogin();
     }
 
     @Override
@@ -62,6 +65,9 @@ public class CatergoriesActivity extends AppCompatActivity
 
     private void initRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        setupAdapter();
     }
 
     private void initToolbar() {
@@ -103,15 +109,12 @@ public class CatergoriesActivity extends AppCompatActivity
         TextView userEmail = (TextView) headerLayout.findViewById(R.id.emailTextView);
         CircleImageView imageView = (CircleImageView) headerLayout.findViewById(R.id.profileImageView);
 
-        Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show();
+        userName.setText(name);
+        userEmail.setText(email);
         Picasso.with(this)
                 .load(profilePicture)
                 .resize(150, 150)
                 .into(imageView);
-
-        userName.setText(name);
-        userEmail.setText(email);
-
     }
 
     private void setupAdapter(){
@@ -122,21 +125,24 @@ public class CatergoriesActivity extends AppCompatActivity
                     @Override
                     public void onCompleted(Exception e, JsonObject result) {
                         // do stuff with the result or error
-                        JsonArray categories = result.getAsJsonArray();
+                        //System.out.println(e.getMessage());
+                        JsonArray categories = result.getAsJsonArray("categories");
+                        mCategoryList.clear();
                         for(int i=0; i<categories.size(); i++){
                             JsonObject cobject = (JsonObject) categories.get(i);
                             mCategoryList.add(new Category(cobject.get("category_id").getAsString(),
                                     cobject.get("category_title").getAsString(),
-                                    cobject.get("category_status").getAsString().equals("1")?true:false,
+                                    cobject.get("category_status").getAsString().equals("1"),
                                     cobject.get("category_url").getAsString(),
                                     cobject.get("category_description").getAsString(),
                                     cobject.get("category_date").getAsString()));
                         }
+
                         mCategoryAdapter = new CategoryAdapter(CatergoriesActivity.this, mCategoryList);
                         mRecyclerView.setAdapter(mCategoryAdapter);
+
                     }
                 });
-
     }
     @Override
     public void onBackPressed() {
