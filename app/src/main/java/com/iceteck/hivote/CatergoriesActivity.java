@@ -17,7 +17,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -58,9 +60,9 @@ public class CatergoriesActivity extends AppCompatActivity
         initToolbar();
         initFab();
         setupDrawerLayout();
+        session.checkLogin();
+        setupAdapter();
         initRecyclerView();
-
-      //  setupAdapter();
         session.checkLogin();
     }
 
@@ -144,14 +146,15 @@ public class CatergoriesActivity extends AppCompatActivity
                                     cobject.get("category_description").getAsString(),
                                     cobject.get("category_date").getAsString()));
                         }
+
                         mCategoryAdapter = new CategoryAdapter(CatergoriesActivity.this, mCategoryList);
+                        mRecyclerView.setAdapter(mCategoryAdapter);
+
                         mRecyclerView.swapAdapter(mCategoryAdapter, true);
                         mRefreshLayout.setRefreshing(false);
                     }
                 });
-
     }
-
 
     @Override
     public void onBackPressed() {
@@ -193,7 +196,25 @@ public class CatergoriesActivity extends AppCompatActivity
                     .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-
+                            Ion.with(CatergoriesActivity.this)
+                                    .load(BASEURL + "addcategory")
+                                    .setBodyParameter("title", "noop")
+                                    .setBodyParameter("description", "bar")
+                                    .asJsonObject()
+                                    .setCallback(new FutureCallback<JsonObject>() {
+                                        @Override
+                                        public void onCompleted(Exception e, JsonObject response) {
+                                            if(e != null){
+                                                if(response.getAsString("status").equals("200")){
+                                                    //success
+                                                }else{
+                                                    //failed to create category
+                                                }
+                                            }else{
+                                                Toast.makeText(CatergoriesActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
                         }
                     })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
