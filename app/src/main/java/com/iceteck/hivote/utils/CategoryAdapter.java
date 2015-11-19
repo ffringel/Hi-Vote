@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.iceteck.hivote.R;
 import com.iceteck.hivote.data.Category;
 
@@ -52,15 +53,18 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CatVie
 
     @Override
     public void onBindViewHolder(CatViewHolder holder, int position) {
-        //TODO
-        Category sCateory = cateogryList.get(position);
-        String title = sCateory.getTitle().substring(0,1);
-        holder.category.setText(sCateory.getTitle());
-        holder.description.setText(sCateory.getDescription());
-        holder.date.setText(sCateory.getDate());
-        TextDrawable drawable1 = TextDrawable.builder()
-                .buildRoundRect(title, Color.RED, 150); // radius in px
-        holder.categoryImage.setImageDrawable(drawable1);
+        Category sCategory = cateogryList.get(position);
+        String title = sCategory.getTitle().substring(0,1);
+        holder.category.setText(sCategory.getTitle());
+        holder.description.setText(sCategory.getDescription());
+        holder.date.setText(sCategory.getDate());
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+        int color = generator.getRandomColor();
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(title, color); // radius in px
+        holder.categoryImage.setImageDrawable(drawable);
     }
 
     @Override

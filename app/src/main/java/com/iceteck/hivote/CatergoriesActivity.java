@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -108,15 +107,12 @@ public class CatergoriesActivity extends AppCompatActivity
         TextView userEmail = (TextView) headerLayout.findViewById(R.id.emailTextView);
         CircleImageView imageView = (CircleImageView) headerLayout.findViewById(R.id.profileImageView);
 
-        Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show();
+        userName.setText(name);
+        userEmail.setText(email);
         Picasso.with(this)
                 .load(profilePicture)
                 .resize(150, 150)
                 .into(imageView);
-
-        userName.setText(name);
-        userEmail.setText(email);
-
     }
 
     private void setupAdapter(){
@@ -133,7 +129,7 @@ public class CatergoriesActivity extends AppCompatActivity
                             JsonObject cobject = (JsonObject) categories.get(i);
                             mCategoryList.add(new Category(cobject.get("category_id").getAsString(),
                                     cobject.get("category_title").getAsString(),
-                                    cobject.get("category_status").getAsString().equals("1")?true:false,
+                                    cobject.get("category_status").getAsString().equals("1"),
                                     cobject.get("category_url").getAsString(),
                                     cobject.get("category_description").getAsString(),
                                     cobject.get("category_date").getAsString()));
