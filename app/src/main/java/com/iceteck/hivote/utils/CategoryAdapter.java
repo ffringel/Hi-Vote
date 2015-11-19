@@ -44,7 +44,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CatVie
     }
     @Override
     public CatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_catergories, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_recycler, parent, false);
         CatViewHolder viewHolder = new CatViewHolder(view);
 
         return viewHolder;

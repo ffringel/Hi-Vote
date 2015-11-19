@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+repositories{
+    maven {
+        url 'http://dl.bintray.com/amulyakhare/maven'
+    }
+}
+
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.0"
@@ -10,6 +17,8 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+
     }
     buildTypes {
         release {
@@ -32,5 +41,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
-    compile 'com.koushikdutta.ion:ion:2.+'
+    compile 'com.koushikdutta.ion:ion:2.1.6'
 }

@@ -1,8 +1,10 @@
 package com.iceteck.hivote;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
+import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
