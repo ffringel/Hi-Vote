@@ -1,16 +1,21 @@
 package com.iceteck.hivote;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -39,11 +44,14 @@ public class CatergoriesActivity extends AppCompatActivity
     private List<Category> mCategoryList;
     public static final String BASEURL = "http://hivote.iceteck.com/index.php/home/";
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catergories);
+
+        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         session = new SessionManager(getApplicationContext());
         mCategoryList = new ArrayList<>();
@@ -56,16 +64,18 @@ public class CatergoriesActivity extends AppCompatActivity
         session.checkLogin();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
     private void initRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         mRecyclerView.setLayoutManager(layoutManager);
         setupAdapter();
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //mRecyclerView.setAdapter(null);
+                setupAdapter();
+            }
+        });
     }
 
     private void initToolbar() {
@@ -78,8 +88,10 @@ public class CatergoriesActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        //.setAction("Action", null).show();
+                AddCategory addCategory = new AddCategory();
+                addCategory.show(getSupportFragmentManager(), "Add Category");
             }
         });
     }
@@ -125,6 +137,7 @@ public class CatergoriesActivity extends AppCompatActivity
                         // do stuff with the result or error
                         //System.out.println(e.getMessage());
                         JsonArray categories = result.getAsJsonArray("categories");
+                        mCategoryList.clear();
                         for(int i=0; i<categories.size(); i++){
                             JsonObject cobject = (JsonObject) categories.get(i);
                             mCategoryList.add(new Category(cobject.get("category_id").getAsString(),
@@ -135,11 +148,14 @@ public class CatergoriesActivity extends AppCompatActivity
                                     cobject.get("category_date").getAsString()));
                         }
                         mCategoryAdapter = new CategoryAdapter(CatergoriesActivity.this, mCategoryList);
-                        mRecyclerView.setAdapter(mCategoryAdapter);
+                        mRecyclerView.swapAdapter(mCategoryAdapter, true);
+                        mRefreshLayout.setRefreshing(false);
                     }
                 });
 
     }
+
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -167,5 +183,29 @@ public class CatergoriesActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public static class AddCategory extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+
+            builder.setView(inflater.inflate(R.layout.add_category_dialog, null))
+                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            AddCategory.this.getDialog().cancel();
+                        }
+                    });
+            return builder.create();
+        }
     }
 }
