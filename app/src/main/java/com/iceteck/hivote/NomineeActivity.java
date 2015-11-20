@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -43,6 +44,9 @@ public class NomineeActivity extends AppCompatActivity {
     private List<Nominees> nomineesList;
     public static final String BASEURL = "http://hivote.iceteck.com/index.php/home/";
     private NomineeAdapter nomineeAdapter;
+    private static String CATEGORY_NOMINEE_ID ;
+    private static Context nContext;
+    private static String path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,8 @@ public class NomineeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         nomineesList = new ArrayList<Nominees>();
+        nContext = NomineeActivity.this;
+        CATEGORY_NOMINEE_ID = getIntent().getStringExtra("categoryid");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +78,7 @@ public class NomineeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if(isNetworkconnected()){
+            CATEGORY_NOMINEE_ID = getIntent().getStringExtra("categoryid");
             getNominees(getIntent().getStringExtra("categoryid"));
         }else{
             setEmptyView(true, getResources().getString(R.string.connection_error));
@@ -96,7 +103,7 @@ public class NomineeActivity extends AppCompatActivity {
                                     nomineesList.add(new Nominees(cobject.get("nominee_id").getAsLong(),
                                             cobject.get("nominee_name").getAsString(),
                                             cobject.get("nominee_portfolio").getAsString(),
-                                            cobject.get("nominee_url").getAsString(),
+                                            "",
                                             cobject.get("nominee_bitmap").getAsString(),
                                             cobject.get("nominee_votes").getAsLong()));
                                 }
@@ -140,27 +147,32 @@ public class NomineeActivity extends AppCompatActivity {
     }
 
     //add a new nominee to an existing category
-    private void addNominee(String nomineeCategoryID, String name, String desc, File profileImage) throws Exception{
-        Ion.with(NomineeActivity.this)
-                .load(BASEURL + "addnominee+/" + nomineeCategoryID)
-                .uploadProgressBar(new ProgressBar(NomineeActivity.this))
-                .setMultipartParameter("nominee_name", name)
-                .setMultipartParameter("nominee_bitmap", profileImage.getName())
-                .setMultipartParameter("nominee_portfolio", desc)
-                .setMultipartParameter("nominee_url", " ")
+    private static void addNominee(String name, String desc, File profileImage) throws Exception{
+        Ion.with(nContext)
+                .load(BASEURL + "addnominee/" + CATEGORY_NOMINEE_ID)
+                .uploadProgressBar(new ProgressBar(nContext))
+                .setMultipartParameter("name", name)
+                .setMultipartParameter("bitmap", profileImage.getName())
+                .setMultipartParameter("portfolio", desc)
+                .setMultipartParameter("url", " ")
                 .setMultipartFile("profile", "application/*", profileImage)
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
+                .asString()
+                .setCallback(new FutureCallback<String>() {
                     @Override
-                    public void onCompleted(Exception e, JsonObject result) {
+                    public void onCompleted(Exception e, String result) {
                         // do stuff with the result or error
                         //System.out.println(e.getMessage());
+                        if(e == null)
                         try {
-                            String resultStatus = result.get("status").getAsString();
-
+                            //String resultStatus = result.get("status").getAsString();
+                            //System.out.println("Status: "+resultStatus);
+                            System.out.println(result);
                         } catch (Exception e1) {
                             e1.printStackTrace();
 //                            setEmptyView(true, "");
+                        }
+                        else{
+                            System.out.println(e);
                         }
                     }
                 });
@@ -208,6 +220,7 @@ public class NomineeActivity extends AppCompatActivity {
 
             nomineeName = (EditText) nomineeView.findViewById(R.id.nominee_name);
             nomineeDesc = (EditText) nomineeView.findViewById(R.id.description);
+            nomProfileImage = (ImageView) nomineeView.findViewById(R.id.nom_image);
             addImage = (Button) nomineeView.findViewById(R.id.addImage);
             addImage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -224,6 +237,13 @@ public class NomineeActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
 
+                            try {
+                                addNominee(nomineeName.getText().toString(), nomineeDesc.getText().toString(), new File(path));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(getActivity(),"Failed to add nominee. Please try gain.", Toast.LENGTH_LONG).show();
+                                AddNominee.this.getDialog().cancel();
+                            }
                         }
                     })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -252,6 +272,7 @@ public class NomineeActivity extends AppCompatActivity {
                 String picturePath = cursor.getString(columnIndex);
                 cursor.close();
 
+                path = picturePath;
                 nomProfileImage = (ImageView) nomineeView.findViewById(R.id.nom_image);
                 nomProfileImage.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 
