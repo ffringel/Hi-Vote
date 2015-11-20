@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,6 +39,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class NomineeActivity extends AppCompatActivity {
 
     private TextView emptyTextView;
@@ -49,6 +52,7 @@ public class NomineeActivity extends AppCompatActivity {
     private static Context nContext;
     private static String path;
     private SwipeRefreshLayout mRefreshLayout;
+    private static SweetAlertDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +72,8 @@ public class NomineeActivity extends AppCompatActivity {
                 getNominees(getIntent().getStringExtra("categoryid"));
             }
         });
+        //configuring progress dialog for adding a nominee
+        mProgressDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
 
         nomineesList = new ArrayList<>();
         nContext = NomineeActivity.this;
@@ -150,6 +156,29 @@ public class NomineeActivity extends AppCompatActivity {
                 connectivityManager.getActiveNetworkInfo().isConnected();
     }
 
+    //start sweetDialog
+    private static void startSweetDialog(String message){
+        if(mProgressDialog != null ) {
+            mProgressDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+            mProgressDialog.setTitleText(message);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.show();
+        }
+        else{
+            mProgressDialog = new SweetAlertDialog(nContext, SweetAlertDialog.PROGRESS_TYPE);
+            startSweetDialog(message);
+        }
+    }
+
+    //end and cancel sweetdialog
+    private static void endSweetDialog(String title, String message){
+        mProgressDialog.setTitleText(title)
+                .setContentText(message)
+                .setConfirmText("OK")
+                .setConfirmClickListener(null)
+                .changeAlertType(title.equals("success")?SweetAlertDialog.SUCCESS_TYPE:SweetAlertDialog.ERROR_TYPE);
+//        mProgressDialog.dismissWithAnimation();
+    }
     //set the empty view with an appropriate message
     private void setEmptyView(boolean show, String message){
         if(show){
@@ -163,6 +192,7 @@ public class NomineeActivity extends AppCompatActivity {
 
     //add a new nominee to an existing category
     private static void addNominee(String name, String desc, File profileImage) throws Exception{
+        startSweetDialog("Adding Nominee");
         Ion.with(nContext)
                 .load(BASEURL + "addnominee/" + CATEGORY_NOMINEE_ID)
                 .uploadProgressBar(new ProgressBar(nContext))
@@ -179,41 +209,18 @@ public class NomineeActivity extends AppCompatActivity {
                         //System.out.println(e.getMessage());
                         if(e == null)
                         try {
-                            //String resultStatus = result.get("status").getAsString();
-                            //System.out.println("Status: "+resultStatus);
+                            endSweetDialog("success", "A new nominee has been added");
                             System.out.println(result);
                         } catch (Exception e1) {
                             e1.printStackTrace();
-//                            setEmptyView(true, "");
+                            endSweetDialog("Server Error", "Failed to parse data");
                         }
                         else{
                             System.out.println(e);
+                            endSweetDialog("Error", e.getMessage());
                         }
                     }
                 });
-
-/*        Ion.with(NomineeActivity.this)
-                .load(BASEURL + "addnominee+/"+nomineeCategoryID)
-                .setBodyParameter("nominee_name", name)
-                .setBodyParameter("nominee_bitmap", profileImage.getName())
-                .setBodyParameter("nominee_portfolio", desc)
-                .setBodyParameter("nominee_url", "")
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
-                        // do stuff with the result or error
-                        //System.out.println(e.getMessage());
-                        try {
-                            JsonArray categories = result.getAsJsonArray("categories");
-
-                            setEmptyView(false, "");
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                            setEmptyView(true, "");
-                        }
-                    }
-                });*/
     }
 
     public static class AddNominee extends DialogFragment {

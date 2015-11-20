@@ -5,6 +5,9 @@ repositories{
         url 'http://dl.bintray.com/amulyakhare/maven'
     }
 }
+repositories {
+    mavenCentral()
+}
 
 android {
     compileSdkVersion 23
@@ -41,4 +44,5 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.koushikdutta.ion:ion:2.1.6'
+    compile 'cn.pedant.sweetalert:library:1.3'
 }
