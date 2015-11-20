@@ -21,11 +21,11 @@ public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.CatViewH
     private List<Nominees> nomineeList;
 
     public static class CatViewHolder extends RecyclerView.ViewHolder{
-        CardView cardView;
-        TextView category;
-        TextView description;
-        TextView date;
-        ImageView categoryImage;
+        final CardView cardView;
+        final TextView category;
+        final TextView description;
+        final TextView date;
+        final ImageView categoryImage;
 
         public CatViewHolder(View itemView) {
             super(itemView);
