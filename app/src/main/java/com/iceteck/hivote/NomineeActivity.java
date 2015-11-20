@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,16 +48,27 @@ public class NomineeActivity extends AppCompatActivity {
     private static String CATEGORY_NOMINEE_ID ;
     private static Context nContext;
     private static String path;
+    private SwipeRefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nominee);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         nomineeRecycler = (RecyclerView) findViewById(R.id.nomineeRecyclerview);
         emptyTextView = (TextView) findViewById(R.id.nomineeTextViewEmpty);
         nomineeRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getNominees(getIntent().getStringExtra("categoryid"));
+            }
+        });
+
         nomineesList = new ArrayList<Nominees>();
         nContext = NomineeActivity.this;
         CATEGORY_NOMINEE_ID = getIntent().getStringExtra("categoryid");
@@ -80,6 +92,7 @@ public class NomineeActivity extends AppCompatActivity {
         if(isNetworkconnected()){
             CATEGORY_NOMINEE_ID = getIntent().getStringExtra("categoryid");
             getNominees(getIntent().getStringExtra("categoryid"));
+            System.out.println(getIntent().getStringExtra("categoryid"));
         }else{
             setEmptyView(true, getResources().getString(R.string.connection_error));
         }
@@ -116,6 +129,7 @@ public class NomineeActivity extends AppCompatActivity {
 
                                 nomineeRecycler.swapAdapter(nomineeAdapter, true);
 
+                                mRefreshLayout.setRefreshing(false);
                             } catch (Exception e1) {
                                 e1.printStackTrace();
                                 setEmptyView(true, "");
@@ -227,7 +241,6 @@ public class NomineeActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     Intent intent = new Intent(Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
                     startActivityForResult(intent, RESULT_LOAD_IMAGE);
                 }
             });
