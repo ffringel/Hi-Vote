@@ -11,8 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 public class NomineeActivity extends AppCompatActivity {
+
+    private TextView emptyTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,22 @@ public class NomineeActivity extends AppCompatActivity {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    private void setEmptyView(boolean show){
+        if(show){
+            emptyTextView.setVisibility(View.VISIBLE);
+        }else{
+            emptyTextView.setVisibility(View.GONE);
+        }
+
     }
 
     public static class AddNominee extends DialogFragment {

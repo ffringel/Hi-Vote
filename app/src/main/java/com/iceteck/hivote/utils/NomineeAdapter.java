@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,25 +16,25 @@ import com.iceteck.hivote.data.Nominees;
 
 import java.util.List;
 
-public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.CatViewHolder>{
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.NomineeViewHolder>{
 
     private Context context;
     private List<Nominees> nomineeList;
 
-    public static class CatViewHolder extends RecyclerView.ViewHolder{
-        final CardView cardView;
-        final TextView category;
-        final TextView description;
-        final TextView date;
-        final ImageView categoryImage;
+    public static class NomineeViewHolder extends RecyclerView.ViewHolder{
+        final ImageButton voteButton;
+        final TextView nomineeNameTextView;
+        final TextView votesTextView;
+        final CircleImageView nomineeImage;
 
-        public CatViewHolder(View itemView) {
+        public NomineeViewHolder(View itemView) {
             super(itemView);
-            cardView = (CardView) itemView.findViewById(R.id.categoryview);
-            category = (TextView) itemView.findViewById(R.id.category_name);
-            description = (TextView) itemView.findViewById(R.id.description);
-            date = (TextView) itemView.findViewById(R.id.date);
-            categoryImage = (ImageView) itemView.findViewById(R.id.category_image);
+            voteButton = (ImageButton) itemView.findViewById(R.id.vote_image);
+            nomineeNameTextView = (TextView) itemView.findViewById(R.id.nominee_name);
+            votesTextView = (TextView) itemView.findViewById(R.id.votes_num);
+            nomineeImage = (CircleImageView) itemView.findViewById(R.id.nom_image);
         }
     }
 
@@ -41,17 +42,19 @@ public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.CatViewH
         context = ctx;
         nomineeList = clist;
     }
+
     @Override
-    public CatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_catergories, parent, false);
-        CatViewHolder viewHolder = new CatViewHolder(view);
+    public NomineeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.nominee_feed_recycler, parent, false);
+        NomineeViewHolder viewHolder = new NomineeViewHolder(view);
 
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(CatViewHolder holder, int position) {
+    public void onBindViewHolder(NomineeViewHolder holder, int position) {
         //TODO
+
     }
 
     @Override

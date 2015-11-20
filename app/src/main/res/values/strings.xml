@@ -27,6 +27,7 @@
     <string name="welcome">Welcome.</string>
     <string name="title_activity_add_category">AddCategory</string>
     <string name="title_activity_nominee">NomineeActivity</string>
+    <string name="empty_nominee_list">Empty list. Network Error</string>
 
 
 </resources>
