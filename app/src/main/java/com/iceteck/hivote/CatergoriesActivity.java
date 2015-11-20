@@ -234,8 +234,6 @@ public class CatergoriesActivity extends AppCompatActivity
                                             //System.out.println(e.getMessage());
                                             if (e == null) {
                                                 if (response.get("status").getAsString().equals("200")) {
-                                                    //success
-//                                                    System.out.println(response);
                                                     String id = response.get("id").getAsString();
                                                     System.out.println("Category id: "+id);
                                                     Intent nomineeIntent = new Intent(getActivity(), NomineeActivity.class);
