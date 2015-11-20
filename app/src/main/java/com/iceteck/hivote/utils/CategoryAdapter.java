@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -51,7 +52,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CatVie
 
     @Override
     public void onBindViewHolder(CatViewHolder holder, int position) {
-        Category sCategory = cateogryList.get(position);
+        final Category sCategory = cateogryList.get(position);
         String title = sCategory.getTitle().substring(0,1);
         holder.category.setText(sCategory.getTitle());
         holder.description.setText(sCategory.getDescription());
@@ -63,6 +64,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CatVie
         TextDrawable drawable = TextDrawable.builder()
                 .buildRound(title, color); // radius in px
         holder.categoryImage.setImageDrawable(drawable);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, ""+sCategory.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

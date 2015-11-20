@@ -9,6 +9,14 @@
     tools:showIn="@layout/app_bar_catergories"
     tools:context="com.iceteck.hivote.CatergoriesActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/error_view"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:text="@string/connection_error" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
