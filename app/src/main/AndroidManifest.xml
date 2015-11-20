@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" -->
     <application
@@ -45,6 +46,7 @@
         <activity
             android:name=".NomineeActivity"
             android:label="@string/title_activity_nominee"
+            android:screenOrientation="portrait"
             android:parentActivityName=".CatergoriesActivity"
             android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
