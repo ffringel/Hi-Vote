@@ -14,7 +14,7 @@
         android:layout_marginBottom="10dp"
         android:text="@string/new_nominee"/>
 
-    <EditText android:id="@+id/category_name"
+    <EditText android:id="@+id/nominee_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
@@ -28,10 +28,17 @@
         android:layout_marginBottom="10dp"
         android:hint="@string/nom_desc"/>
 
-    <ImageButton android:id="@+id/nom_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+    <ImageView
+        android:id="@+id/nom_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:src="@android:drawable/ic_menu_crop"/>
+        android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
+
+    <Button android:id="@+id/addImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/add"/>
 
 </LinearLayout>
