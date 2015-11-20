@@ -190,6 +190,7 @@ public class NomineeActivity extends AppCompatActivity {
     }
 
     public static class AddNominee extends DialogFragment {
+
         private static int RESULT_LOAD_IMAGE = 1;
 
         EditText nomineeName;
@@ -197,7 +198,6 @@ public class NomineeActivity extends AppCompatActivity {
         ImageView nomProfileImage;
         Button addImage;
         View nomineeView;
-
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
