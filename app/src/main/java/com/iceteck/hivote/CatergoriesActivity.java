@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ public class CatergoriesActivity extends AppCompatActivity
     public static final String BASEURL = "http://hivote.iceteck.com/index.php/home/";
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mRefreshLayout;
+    private TextView errorTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class CatergoriesActivity extends AppCompatActivity
 
     private void initRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        errorTextView = (TextView) findViewById(R.id.error_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         mRecyclerView.setLayoutManager(layoutManager);
         setupAdapter();
@@ -126,35 +129,53 @@ public class CatergoriesActivity extends AppCompatActivity
     }
 
     private void setupAdapter(){
-        Ion.with(this)
-                .load(BASEURL+"fetchcategories")
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
-                        // do stuff with the result or error
-                        //System.out.println(e.getMessage());
-                        JsonArray categories = result.getAsJsonArray("categories");
-                        mCategoryList.clear();
-                        for(int i=0; i<categories.size(); i++){
-                            JsonObject cobject = (JsonObject) categories.get(i);
-                            mCategoryList.add(new Category(cobject.get("category_id").getAsString(),
-                                    cobject.get("category_title").getAsString(),
-                                    cobject.get("category_status").getAsString().equals("1"),
-                                    cobject.get("category_url").getAsString(),
-                                    cobject.get("category_description").getAsString(),
-                                    cobject.get("category_date").getAsString()));
+        try {
+            Ion.with(this)
+                    .load(BASEURL + "fetchcategories")
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            // do stuff with the result or error
+                            //System.out.println(e.getMessage());
+                            try {
+                                JsonArray categories = result.getAsJsonArray("categories");
+                                mCategoryList.clear();
+                                for (int i = 0; i < categories.size(); i++) {
+                                    JsonObject cobject = (JsonObject) categories.get(i);
+                                    mCategoryList.add(new Category(cobject.get("category_id").getAsString(),
+                                            cobject.get("category_title").getAsString(),
+                                            cobject.get("category_status").getAsString().equals("1"),
+                                            cobject.get("category_url").getAsString(),
+                                            cobject.get("category_description").getAsString(),
+                                            cobject.get("category_date").getAsString()));
+                                }
+
+                                mCategoryAdapter = new CategoryAdapter(CatergoriesActivity.this, mCategoryList);
+                                mRecyclerView.setAdapter(mCategoryAdapter);
+
+                                mRecyclerView.swapAdapter(mCategoryAdapter, true);
+                                mRefreshLayout.setRefreshing(false);
+                                showEmptyView(false);
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                                showEmptyView(true);
+                            }
                         }
-
-                        mCategoryAdapter = new CategoryAdapter(CatergoriesActivity.this, mCategoryList);
-                        mRecyclerView.setAdapter(mCategoryAdapter);
-
-                        mRecyclerView.swapAdapter(mCategoryAdapter, true);
-                        mRefreshLayout.setRefreshing(false);
-                    }
-                });
+                    });
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            showEmptyView(true);
+        }
     }
 
+    private void showEmptyView(boolean show){
+        if(show){
+            errorTextView.setVisibility(View.VISIBLE);
+        }else{
+            errorTextView.setVisibility(View.GONE);
+        }
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -185,32 +206,41 @@ public class CatergoriesActivity extends AppCompatActivity
     }
 
     public static class AddCategory extends DialogFragment {
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
             LayoutInflater inflater = getActivity().getLayoutInflater();
 
-            builder.setView(inflater.inflate(R.layout.add_category_dialog, null))
+            View categoryView = inflater.inflate(R.layout.add_category_dialog, null);
+            final EditText categoryName = (EditText) categoryView.findViewById(R.id.category_name);
+            final EditText categoryDesc = (EditText) categoryView.findViewById(R.id.description);
+
+                    builder.setView(categoryView)
                     .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+
                             Ion.with(getActivity())
                                     .load(BASEURL + "addcategory")
-                                    .setBodyParameter("title", "noop")
-                                    .setBodyParameter("description", "bar")
+                                    .setBodyParameter("title", categoryName.getText().toString())
+                                    .setBodyParameter("description", categoryDesc.getText().toString())
                                     .asJsonObject()
                                     .setCallback(new FutureCallback<JsonObject>() {
                                         @Override
                                         public void onCompleted(Exception e, JsonObject response) {
-                                            if(e != null){
-                                                if(response.get("status").getAsString().equals("200")){
+                                            //System.out.println(e.getMessage());
+                                            if (e == null) {
+                                                if (response.get("status").getAsString().equals("200")) {
                                                     //success
-                                                }else{
+                                                    Toast.makeText(getActivity(), ""+response.get("status").getAsString(),
+                                                            Toast.LENGTH_SHORT).show();
+                                                } else {
                                                     //failed to create category
                                                 }
-                                            }else{
-                                                Toast.makeText(getActivity(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.common_google_play_services_network_error_title), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
