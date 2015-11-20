@@ -5,11 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.iceteck.hivote.R;
 import com.iceteck.hivote.data.Nominees;
+import com.koushikdutta.ion.Ion;
 
 import java.util.List;
 
@@ -51,7 +53,25 @@ public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.NomineeV
     @Override
     public void onBindViewHolder(NomineeViewHolder holder, int position) {
         //TODO
+        Nominees lnominee = nomineeList.get(position);
+        //holder.nomineeImage
+        holder.nomineeNameTextView.setText(lnominee.getName());
+        holder.votesTextView.setText(""+lnominee.getVotes());
+        Ion.with(context)
+                .load(lnominee.getBitmap())
+                .withBitmap()
+                .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
+                .error(R.mipmap.ic_launcher)
+                .animateLoad(android.R.anim.fade_in)
+                .animateIn(android.R.anim.fade_out)
+                .intoImageView(holder.nomineeImage);
 
+        holder.voteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     @Override

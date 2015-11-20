@@ -1,6 +1,7 @@
 package com.iceteck.hivote.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.iceteck.hivote.NomineeActivity;
 import com.iceteck.hivote.R;
 import com.iceteck.hivote.data.Category;
 
@@ -68,7 +70,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CatVie
 
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, ""+sCategory.getTitle(), Toast.LENGTH_SHORT).show();
+                Intent nomineeIntent = new Intent(context, NomineeActivity.class);
+                nomineeIntent.putExtra("categoryid", sCategory.getId());
+                nomineeIntent.putExtra("categorytitle", sCategory.getTitle());
+                context.startActivity(nomineeIntent);
             }
         });
     }

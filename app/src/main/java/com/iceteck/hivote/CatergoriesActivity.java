@@ -2,6 +2,7 @@ package com.iceteck.hivote;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -236,6 +237,11 @@ public class CatergoriesActivity extends AppCompatActivity
                                                     //success
 //                                                    System.out.println(response);
                                                     String id = response.get("id").getAsString();
+                                                    System.out.println("Category id: "+id);
+                                                    Intent nomineeIntent = new Intent(getActivity(), NomineeActivity.class);
+                                                    nomineeIntent.putExtra("categoryid", id);
+                                                    nomineeIntent.putExtra("categorytitle", categoryName.getText().toString());
+                                                    startActivity(nomineeIntent);
                                                     //use id to launch the add nominee activity;
                                                 } else {
                                                     //failed to create category
