@@ -234,8 +234,9 @@ public class CatergoriesActivity extends AppCompatActivity
                                             if (e == null) {
                                                 if (response.get("status").getAsString().equals("200")) {
                                                     //success
-                                                    Toast.makeText(getActivity(), ""+response.get("status").getAsString(),
-                                                            Toast.LENGTH_SHORT).show();
+//                                                    System.out.println(response);
+                                                    String id = response.get("id").getAsString();
+                                                    //use id to launch the add nominee activity;
                                                 } else {
                                                     //failed to create category
                                                 }
