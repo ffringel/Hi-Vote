@@ -69,7 +69,7 @@ public class NomineeActivity extends AppCompatActivity {
             }
         });
 
-        nomineesList = new ArrayList<Nominees>();
+        nomineesList = new ArrayList<>();
         nContext = NomineeActivity.this;
         CATEGORY_NOMINEE_ID = getIntent().getStringExtra("categoryid");
 
@@ -118,7 +118,8 @@ public class NomineeActivity extends AppCompatActivity {
                                             cobject.get("nominee_portfolio").getAsString(),
                                             "",
                                             cobject.get("nominee_bitmap").getAsString(),
-                                            cobject.get("nominee_votes").getAsLong()));
+                                            cobject.get("nominee_votes").getAsLong(),
+                                            cobject.get("cat__nom_id").getAsString()));
                                 }
                                 if(nomineesList.isEmpty()){
                                     setEmptyView(true, getResources().getString(R.string.emptyNomineeList));

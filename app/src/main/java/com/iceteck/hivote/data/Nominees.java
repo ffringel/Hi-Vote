@@ -12,14 +12,24 @@ public class Nominees {
     private String url;
     private String bitmap;
     private long votes;
+    private String categoryId;
 
-    public Nominees(long nid, String nname, String nport, String nurl, String nbitmap, long nvotes){
+    public Nominees(long nid, String nname, String nport, String nurl, String nbitmap, long nvotes, String cid){
         this.id = nid;
         this.name = nname;
         this.portfolio = nport;
         this.url = nurl;
         this.bitmap = nbitmap;
         this.votes = nvotes;
+        this.categoryId = cid;
+    }
+
+    public String getCategoryId() {
+        return this.categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public long getVotes() {

@@ -1,6 +1,7 @@
 package com.iceteck.hivote;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ public class CatergoriesActivity extends AppCompatActivity
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mRefreshLayout;
     private TextView errorTextView;
+    private static Context ccontext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class CatergoriesActivity extends AppCompatActivity
         setupAdapter();
         initRecyclerView();
         session.checkLogin();
+        ccontext = this;
     }
 
     private void initRecyclerView() {
@@ -198,12 +201,22 @@ public class CatergoriesActivity extends AppCompatActivity
         }  else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_logout) {
+            //session.logoutUser();
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private static void setNominee(String id, String titl){
+        final Intent nomineeIntent = new Intent(ccontext
+                , NomineeActivity.class);
+        nomineeIntent.putExtra("categoryid", id);
+        nomineeIntent.putExtra("categorytitle", titl);
+        ccontext.startActivity(nomineeIntent);
+
     }
 
     public static class AddCategory extends DialogFragment {
@@ -236,10 +249,7 @@ public class CatergoriesActivity extends AppCompatActivity
                                                 if (response.get("status").getAsString().equals("200")) {
                                                     String id = response.get("id").getAsString();
                                                     System.out.println("Category id: "+id);
-                                                    Intent nomineeIntent = new Intent(getActivity(), NomineeActivity.class);
-                                                    nomineeIntent.putExtra("categoryid", id);
-                                                    nomineeIntent.putExtra("categorytitle", categoryName.getText().toString());
-                                                    startActivity(nomineeIntent);
+                                                    setNominee(id, categoryName.getText().toString());
                                                     //use id to launch the add nominee activity;
                                                 } else {
                                                     //failed to create category
@@ -259,5 +269,6 @@ public class CatergoriesActivity extends AppCompatActivity
                     });
             return builder.create();
         }
+
     }
 }

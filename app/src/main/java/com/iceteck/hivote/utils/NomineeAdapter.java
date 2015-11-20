@@ -7,9 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+import com.iceteck.hivote.NomineeActivity;
 import com.iceteck.hivote.R;
 import com.iceteck.hivote.data.Nominees;
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import java.util.List;
@@ -50,9 +54,9 @@ public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.NomineeV
     }
 
     @Override
-    public void onBindViewHolder(NomineeViewHolder holder, int position) {
+    public void onBindViewHolder(final NomineeViewHolder holder, int position) {
         //TODO
-        Nominees lnominee = nomineeList.get(position);
+        final Nominees lnominee = nomineeList.get(position);
         //holder.nomineeImage
         holder.nomineeNameTextView.setText(lnominee.getName());
         holder.votesTextView.setText(""+lnominee.getVotes());
@@ -60,7 +64,7 @@ public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.NomineeV
                 .load(lnominee.getBitmap())
                 .withBitmap()
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
-                .error(R.mipmap.ic_launcher)
+                .error(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .animateLoad(android.R.anim.fade_in)
                 .animateIn(android.R.anim.fade_out)
                 .intoImageView(holder.nomineeImage);
@@ -68,7 +72,39 @@ public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.NomineeV
         holder.voteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try {
+                    SessionManager msession = new SessionManager(context);
+                    Ion.with(context)
+                            .load(NomineeActivity.BASEURL + "votenominee/" + lnominee.getId())
+                            .setBodyParameter("email", msession.getUserDetails().get(SessionManager.KEY_EMAIL))
+                            .setBodyParameter("number", " ")
+                            .setBodyParameter("name", msession.getUserDetails().get(SessionManager.KEY_NAME))
+                            .setBodyParameter("category",lnominee.getCategoryId())
+                            .setBodyParameter("voter_id",msession.getUserDetails().get(SessionManager.KEY_EMAIL))
+                            .asJsonObject()
+                            .setCallback(new FutureCallback<JsonObject>() {
+                                @Override
+                                public void onCompleted(Exception e, JsonObject result) {
+                                    if (e == null) {
+                                        try {
+                                            if (result.get("status").getAsString().equals("200")) {
+                                                Toast.makeText(context, "Voted successfully", Toast.LENGTH_SHORT).show();
+                                                holder.votesTextView.setText(String.format("%d", lnominee.getVotes() + 1));
+                                            } else
+                                                Toast.makeText(context, "Voting error occurred", Toast.LENGTH_SHORT).show();
+                                        } catch (Exception e1) {
+                                            e1.printStackTrace();
+                                        }
+                                    } else {
+                                        System.out.println(e.getMessage());
+                                        Toast.makeText(context, "Error voting. Please try again", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    Toast.makeText(context, context.getResources().getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
