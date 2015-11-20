@@ -5,8 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.iceteck.hivote.R;
@@ -23,14 +22,14 @@ public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.NomineeV
     private List<Nominees> nomineeList;
 
     public static class NomineeViewHolder extends RecyclerView.ViewHolder{
-        final ImageButton voteButton;
+        final ImageView voteImage;
         final TextView nomineeNameTextView;
         final TextView votesTextView;
         final CircleImageView nomineeImage;
 
         public NomineeViewHolder(View itemView) {
             super(itemView);
-            voteButton = (ImageButton) itemView.findViewById(R.id.vote_image);
+            voteImage = (ImageView) itemView.findViewById(R.id.vote_image);
             nomineeNameTextView = (TextView) itemView.findViewById(R.id.nominee_name);
             votesTextView = (TextView) itemView.findViewById(R.id.votes_num);
             nomineeImage = (CircleImageView) itemView.findViewById(R.id.nom_image);
@@ -66,7 +65,7 @@ public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.NomineeV
                 .animateIn(android.R.anim.fade_out)
                 .intoImageView(holder.nomineeImage);
 
-        holder.voteButton.setOnClickListener(new View.OnClickListener() {
+        holder.voteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

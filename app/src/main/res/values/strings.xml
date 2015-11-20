@@ -17,6 +17,7 @@
     <string name="new_nominee">Add New Nominee</string>
     <string name="nom_name">Nominee Name</string>
     <string name="nom_desc">Description</string>
+    <string name="vote">Votes</string>
 
     <string name="title_activity_catergories">Catergories</string>
 

@@ -52,16 +52,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Votes"/>
+                    android:text="@string/vote"/>
 
             </LinearLayout>
         </LinearLayout>
 
-        <ImageButton android:id="@+id/vote_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView android:id="@+id/vote_image"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:layout_marginLeft="10dp"
-            android:src="@mipmap/ic_disliked"
-            android:background="#1e1e1e" />
+            android:src="@drawable/ic_action_like"
+            android:layout_gravity="center" />
     </LinearLayout>
 </android.support.v7.widget.CardView>
