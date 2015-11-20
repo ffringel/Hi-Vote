@@ -17,10 +17,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -89,8 +88,6 @@ public class CatergoriesActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        //.setAction("Action", null).show();
                 AddCategory addCategory = new AddCategory();
                 addCategory.show(getSupportFragmentManager(), "Add Category");
             }
@@ -198,7 +195,7 @@ public class CatergoriesActivity extends AppCompatActivity
                     .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Ion.with(CatergoriesActivity.this)
+                            Ion.with(getActivity())
                                     .load(BASEURL + "addcategory")
                                     .setBodyParameter("title", "noop")
                                     .setBodyParameter("description", "bar")
@@ -207,13 +204,13 @@ public class CatergoriesActivity extends AppCompatActivity
                                         @Override
                                         public void onCompleted(Exception e, JsonObject response) {
                                             if(e != null){
-                                                if(response.getAsString("status").equals("200")){
+                                                if(response.get("status").getAsString().equals("200")){
                                                     //success
                                                 }else{
                                                     //failed to create category
                                                 }
                                             }else{
-                                                Toast.makeText(CatergoriesActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getActivity(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
