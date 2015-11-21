@@ -191,29 +191,6 @@ public class NomineeActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-/*        Ion.with(NomineeActivity.this)
-                .load(BASEURL + "addnominee+/"+nomineeCategoryID)
-                .setBodyParameter("nominee_name", name)
-                .setBodyParameter("nominee_bitmap", profileImage.getName())
-                .setBodyParameter("nominee_portfolio", desc)
-                .setBodyParameter("nominee_url", "")
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
-                        // do stuff with the result or error
-                        //System.out.println(e.getMessage());
-                        try {
-                            JsonArray categories = result.getAsJsonArray("categories");
-
-                            setEmptyView(false, "");
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                            setEmptyView(true, "");
-                        }
-                    }
-                });*/
     }
 
     public static class AddNominee extends DialogFragment {

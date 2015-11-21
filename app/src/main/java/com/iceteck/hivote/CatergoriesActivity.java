@@ -201,7 +201,8 @@ public class CatergoriesActivity extends AppCompatActivity
         }  else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_logout) {
-            //session.logoutUser();
+            session.logoutUser();
+            session.isLoggedIn();
 
         }
 
