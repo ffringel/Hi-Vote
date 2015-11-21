@@ -60,14 +60,14 @@ public class CatergoriesActivity extends AppCompatActivity
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         session = new SessionManager(getApplicationContext());
+        session.checkLogin();
         mCategoryList = new ArrayList<>();
         initToolbar();
         initFab();
         setupDrawerLayout();
-        session.checkLogin();
         setupAdapter();
         initRecyclerView();
-        session.checkLogin();
+
         ccontext = this;
     }
 
@@ -201,8 +201,7 @@ public class CatergoriesActivity extends AppCompatActivity
         }  else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_logout) {
-            //session.logoutUser();
-
+            session.logoutUser();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
