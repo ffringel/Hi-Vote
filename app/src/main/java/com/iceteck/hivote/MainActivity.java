@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
     private void signInWithGplus() {
+        mGoogleApiClient.connect();
         if (!mGoogleApiClient.isConnecting()) {
             mSignInClicked = true;
             getGoogleProfileInfo();
