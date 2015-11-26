@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println("Loging in with G+");
                 signInWithGplus();
             }
         });

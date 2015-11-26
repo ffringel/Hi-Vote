@@ -201,15 +201,18 @@ public class NomineeActivity extends AppCompatActivity {
                 .setMultipartParameter("portfolio", desc)
                 .setMultipartParameter("url", " ")
                 .setMultipartFile("profile", "application/*", profileImage)
-                .asString()
-                .setCallback(new FutureCallback<String>() {
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
                     @Override
-                    public void onCompleted(Exception e, String result) {
+                    public void onCompleted(Exception e, JsonObject result) {
                         // do stuff with the result or error
                         //System.out.println(e.getMessage());
                         if(e == null)
                         try {
-                            endSweetDialog("success", "A new nominee has been added");
+                            if(result.get("status").getAsString().equals("200"))
+                                endSweetDialog("success", "A new nominee has been added");
+                            else
+                                endSweetDialog("failure", "The image submitted hasn't the correct dimensions. Max(1024 X 1024). \n Please try again");
                             System.out.println(result);
                         } catch (Exception e1) {
                             e1.printStackTrace();

@@ -60,8 +60,9 @@ public class NomineeAdapter extends RecyclerView.Adapter<NomineeAdapter.NomineeV
         //holder.nomineeImage
         holder.nomineeNameTextView.setText(lnominee.getName());
         holder.votesTextView.setText(""+lnominee.getVotes());
+        System.out.println(lnominee.getBitmap().replaceAll("\\\\",""));
         Ion.with(context)
-                .load(lnominee.getBitmap())
+                .load(lnominee.getBitmap().replaceAll("\\\\",""))
                 .withBitmap()
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .error(R.drawable.com_facebook_profile_picture_blank_portrait)
